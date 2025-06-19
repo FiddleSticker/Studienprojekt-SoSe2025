@@ -1,31 +1,10 @@
-import os
-
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 
 from src import constants as c
 
 
 def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
-    # Load image
-    image = mpimg.imread(image_path)
-    height, width = image.shape[:2]
-
-    # Read bboxes from label_path
-    bboxes = []
-    if not os.path.exists(label_path):
-        return
-
-    with open(label_path, "r") as f:
-        for line in f.readlines():
-            parts = line.strip().split()
-            if len(parts) == 5:
-                class_id, x_center, y_center, w, h = map(float, parts)
-                x_min = (x_center - w / 2) * width
-                y_min = (y_center - h / 2) * height
-                x_max = (x_center + w / 2) * width
-                y_max = (y_center + h / 2) * height
-                bboxes.append((x_min, y_min, x_max, y_max, int(class_id)))
+    image, bboxes = c.get_image_and_bboxes(image_path, label_path)
 
     # Plot image
     fig, ax = plt.subplots(1)
@@ -43,7 +22,7 @@ def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
             facecolor="none",
         )
         ax.add_patch(rect)
-        label = f"Klasse= {class_name}"
+        label = f"Klasse = {class_name}"
         ax.text(
             x_min,
             y_min - 5,
