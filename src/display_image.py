@@ -4,15 +4,22 @@ from src import constants as c
 
 
 def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
-    image, bboxes = c.get_image_and_bboxes(image_path, label_path)
+    image, bboxes, class_labels = c.get_image_and_bboxes(image_path, label_path)
+    height, width = image.shape[:2]
 
     # Plot image
     fig, ax = plt.subplots(1)
     ax.imshow(image)
 
     # Draw bboxes into image
-    for x_min, y_min, x_max, y_max, class_id in bboxes:
+    for (x_center, y_center, w, h), class_id in zip(bboxes, class_labels):
         class_name, class_color = c.CLASS_DICT[class_id]
+
+        x_min = (x_center - w / 2) * width
+        y_min = (y_center - h / 2) * height
+        x_max = (x_center + w / 2) * width
+        y_max = (y_center + h / 2) * height
+
         rect = plt.Rectangle(
             (x_min, y_min),
             x_max - x_min,
@@ -37,7 +44,9 @@ def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
 
 
 # # VLT MÜSST IHR HIER EURE DIRECTORY PATHS ANPASSEN!
-# dataset_dir = os.path.join(c.PROJECT_DIR, "Test2-5")
+# import os
+#
+# dataset_dir = os.path.join(c.PROJECT_DIR, "Test2-8")
 # test_set_dir = os.path.join(dataset_dir, "test")
 # test_set_images_dir = os.path.join(test_set_dir, "images")
 # test_set_labels_dir = os.path.join(test_set_dir, "labels")

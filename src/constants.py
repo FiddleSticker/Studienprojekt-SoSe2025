@@ -10,31 +10,28 @@ CLASS_DICT = {0: ("Bauteil", "b"), 1: ("Schaden", "r")}
 
 
 # some common functions
-def get_bboxes(label_path: str, width: int, height: int) -> list:
+def get_bboxes(label_path: str) -> tuple:
     bboxes = []
+    class_labels = []
     with open(label_path, "r") as f:
         for line in f.readlines():
             parts = line.strip().split()
             if len(parts) == 5:
                 class_id, x_center, y_center, w, h = map(float, parts)
-                x_min = (x_center - w / 2) * width
-                y_min = (y_center - h / 2) * height
-                x_max = (x_center + w / 2) * width
-                y_max = (y_center + h / 2) * height
-                bboxes.append((x_min, y_min, x_max, y_max, int(class_id)))
+                bboxes.append((x_center, y_center, w, h))
+                class_labels.append(int(class_id))
 
-    return bboxes
+    return bboxes, class_labels
 
 
 def get_image_and_bboxes(image_path: str, label_path: str) -> tuple:
     # Load image
     image = mpimg.imread(image_path)
-    height, width = image.shape[:2]
 
     # Read bboxes from label_path
-    bboxes = get_bboxes(label_path, width=width, height=height)
+    bboxes, class_labels = get_bboxes(label_path)
 
-    return image, bboxes
+    return image, bboxes, class_labels
 
 
 def _flatten_dir(dir_path: str) -> None:
