@@ -44,7 +44,6 @@ def get_random_transform():
 
 def augment_image(n_augmentations: int) -> None:
     # Create target folders
-
     images_dir = os.path.join(c.PROJECT_DIR, "data/train/images")
     labels_dir = os.path.join(c.PROJECT_DIR, "data/train/labels")
     target_images_out_dir = os.path.join(c.PROJECT_DIR, "data/aug/images")
@@ -100,6 +99,3 @@ def augment_image(n_augmentations: int) -> None:
                 for class_id, bbox in zip(aug_labels, aug_bboxes):
                     line = f"{class_id} {' '.join(f'{x:.6f}' for x in bbox)}\n"
                     f.write(line)
-
-
-augment_image(3)
