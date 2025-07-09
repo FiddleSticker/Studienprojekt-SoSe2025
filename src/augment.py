@@ -1,9 +1,11 @@
 import os
 import random
+from typing import List
 
 import albumentations as A
 import cv2
-import constants as c
+
+from src import constants as c
 
 
 def get_random_transform():
@@ -42,40 +44,30 @@ def get_random_transform():
     return transform, transform.__hash__()
 
 
-def augment_image(n_augmentations: int) -> None:
-    # Create target folders
-    images_dir = os.path.join(c.PROJECT_DIR, "data/train/images")
-    labels_dir = os.path.join(c.PROJECT_DIR, "data/train/labels")
-    target_images_out_dir = os.path.join(c.PROJECT_DIR, "data/aug/images")
-    target_labels_out_dir = os.path.join(c.PROJECT_DIR, "data/aug/labels")
-
+def augment_images(directory: str, n_augmentations: int, replace: bool = True) -> None:
+    assert os.path.isdir(directory), "Directory does not exist for augmentation!"
+    # Get paths from original folder
+    images_dir = os.path.join(directory, "images")
+    labels_dir = os.path.join(directory, "labels")
     os.makedirs(images_dir, exist_ok=True)
     os.makedirs(labels_dir, exist_ok=True)
-    os.makedirs(target_images_out_dir, exist_ok=True)
-    os.makedirs(target_labels_out_dir, exist_ok=True)
+    image_paths = _filepaths_to_list(images_dir)
+    label_paths = _filepaths_to_list(labels_dir)
 
-    image_paths = []
-    for entry in os.listdir(images_dir):
-        full_path = os.path.join(images_dir, entry)
-        if os.path.isfile(full_path):
-            image_paths.append(full_path)
+    # Create augmented folder (should not already exist!)
+    out_dir = os.path.join(os.path.dirname(directory), f"{directory}_augmented")
+    images_out_dir = os.path.join(out_dir, "images")
+    labels_out_dir = os.path.join(out_dir, "labels")
+    os.makedirs(images_out_dir)
+    os.makedirs(labels_out_dir)
 
-    label_paths = []
-    for entry in os.listdir(labels_dir):
-        full_path = os.path.join(labels_dir, entry)
-        if os.path.isfile(full_path):
-            label_paths.append(full_path)
+    # Load images
+    for image_path, label_path in zip(image_paths, label_paths):
+        image, bboxes, class_labels = c.get_image_and_bboxes(image_path, label_path)
 
-    # Load image
-    for img in range(len(image_paths)):
-        image, bboxes, class_labels = c.get_image_and_bboxes(
-            image_paths[img], label_paths[img]
-        )
+        # Apply transformation per image
         for i in range(n_augmentations):
-
             transform, transform_hash = get_random_transform()
-
-            # Apply transformation
             transformed = transform(
                 image=image, bboxes=bboxes, class_labels=class_labels
             )
@@ -86,16 +78,32 @@ def augment_image(n_augmentations: int) -> None:
 
             # Save transformed image
             out_image_path = os.path.join(
-                target_images_out_dir, "aug_" + str(transform_hash) + ".jpg"
+                images_out_dir, "aug_" + str(transform_hash) + ".jpg"
             )
             out_label_path = os.path.join(
-                target_labels_out_dir, "aug_" + str(transform_hash) + ".txt"
+                labels_out_dir, "aug_" + str(transform_hash) + ".txt"
             )
 
             cv2.imwrite(out_image_path, aug_image)
-
             # Save updated label file
             with open(out_label_path, "w") as f:
                 for class_id, bbox in zip(aug_labels, aug_bboxes):
                     line = f"{class_id} {' '.join(f'{x:.6f}' for x in bbox)}\n"
                     f.write(line)
+
+    if replace:
+        assert not os.path.isdir(
+            f"{directory}_original"
+        ), "Found other original folder! Did not replace original folder!"
+        os.rename(directory, f"{directory}_original")
+        os.rename(f"{directory}_augmented", directory)
+
+
+def _filepaths_to_list(directory: str) -> List[str]:
+    file_paths = []
+    for entry in os.listdir(directory):
+        full_path = os.path.join(directory, entry)
+        if os.path.isfile(full_path):
+            file_paths.append(full_path)
+
+    return file_paths
