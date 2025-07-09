@@ -46,8 +46,9 @@ def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
 # # VLT MÜSST IHR HIER EURE DIRECTORY PATHS ANPASSEN!
 # import os
 #
-# dataset_dir = os.path.join(c.PROJECT_DIR, "Test2-8")
-# test_set_dir = os.path.join(dataset_dir, "test")
+# # dataset_dir = os.path.join(c.PROJECT_DIR, "Test2-8")
+# dataset_dir = os.path.join(c.PROJECT_DIR, "data")
+# test_set_dir = os.path.join(dataset_dir, "train")
 # test_set_images_dir = os.path.join(test_set_dir, "images")
 # test_set_labels_dir = os.path.join(test_set_dir, "labels")
 #

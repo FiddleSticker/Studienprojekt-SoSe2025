@@ -5,6 +5,7 @@ import matplotlib.image as mpimg
 
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.dirname(SRC_DIR)
+DATASET_LOCATION = os.path.join(PROJECT_DIR, "dataset")
 
 CLASS_DICT = {0: ("Bauteil", "b"), 1: ("Schaden", "r")}
 
