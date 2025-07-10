@@ -33,7 +33,7 @@ def get_random_transform():
                 p=0.8,
             ),
             A.GaussNoise(p=0.5),
-            A.MotionBlur(blur_limit=blur_limit, p=0.5),
+            # A.MotionBlur(blur_limit=blur_limit, p=0.5),
             A.HorizontalFlip(p=0.5),
             A.Rotate(limit=100, p=0.5),
             A.RandomScale(scale_limit=0.3, p=0.5),
@@ -67,14 +67,22 @@ def augment_images(directory: str, n_augmentations: int, replace: bool = True) -
 
         # Apply transformation per image
         for i in range(n_augmentations):
-            transform, transform_hash = get_random_transform()
-            transformed = transform(
-                image=image, bboxes=bboxes, class_labels=class_labels
-            )
+            if i < 1:
+                # Keeping original pictures in first iteration
+                aug_image = image
+                aug_bboxes = bboxes
+                aug_labels = class_labels
+                # original filename
+                transform_hash = os.path.splitext(os.path.split(image_path)[-1])[0]
+            else:
+                transform, transform_hash = get_random_transform()
+                transformed = transform(
+                    image=image, bboxes=bboxes, class_labels=class_labels
+                )
 
-            aug_image = transformed["image"]
-            aug_bboxes = transformed["bboxes"]
-            aug_labels = transformed["class_labels"]
+                aug_image = transformed["image"]
+                aug_bboxes = transformed["bboxes"]
+                aug_labels = transformed["class_labels"]
 
             # Save transformed image
             out_image_path = os.path.join(
