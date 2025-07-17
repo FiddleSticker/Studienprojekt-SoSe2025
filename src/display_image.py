@@ -1,9 +1,19 @@
+"""Helper script to plot images together with bounding boxes"""
+
 import matplotlib.pyplot as plt
 
 from src import constants as c
 
 
 def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
+    """
+    Plots an image together with bounding boxes
+
+    Args:
+        image_path (str): Path to the image
+        label_path(str) : Path to the labels
+    """
+
     image, bboxes, class_labels = c.get_image_and_bboxes(image_path, label_path)
     height, width = image.shape[:2]
 

@@ -1,17 +1,31 @@
+"""File containing project wide constants and common functions"""
+
 import os
 import random
 
 import matplotlib.image as mpimg
 
+
+# Important file paths
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.dirname(SRC_DIR)
 DATASET_LOCATION = os.path.join(PROJECT_DIR, "dataset")
 
+# Labels for bounding boxes
 CLASS_DICT = {0: ("Bauteil", "b"), 1: ("Schaden", "r")}
 
 
-# some common functions
-def get_bboxes(label_path: str) -> tuple:
+# Common functions
+def get_bboxes(label_path: str) -> tuple[list, list]:
+    """
+    Retrieves Bounding boxes from label file
+
+    Args:
+        label_path (str): Path to label file
+
+    Returns:
+        tuple[list, list]: List of bounding boxes and List of labels
+    """
     bboxes = []
     class_labels = []
     with open(label_path, "r") as f:
@@ -26,6 +40,16 @@ def get_bboxes(label_path: str) -> tuple:
 
 
 def get_image_and_bboxes(image_path: str, label_path: str) -> tuple:
+    """
+    Retrieves image and bounding boxes from label file
+
+    Args:
+        image_path (str): Path to the image
+        label_path (str): Path to the label file
+
+    Returns:
+        tuple[ndarray, list, list]: Image, List of bounding boxes and List of labels
+    """
     # Load image
     image = mpimg.imread(image_path)
 
@@ -36,6 +60,13 @@ def get_image_and_bboxes(image_path: str, label_path: str) -> tuple:
 
 
 def _flatten_dir(dir_path: str) -> None:
+    """
+    Flattens a directory and all of its subdirectories into a single directory.
+    Only keeps files with certain extension.
+
+    Args:
+        dir_path (str): Path to the directory
+    """
     valid_extensions = [".jpg", ".jpeg", ".png", ".txt", ".yaml"]
     for dir_, subdirs, files in os.walk(dir_path, topdown=False):
         for filename in files:
@@ -55,6 +86,15 @@ def _divide_sets(
     test_ratio: float = 0.2,
     valid_ratio: float = 0.1,
 ) -> None:
+    """
+    Divides image and label files into train, test and validation directories.
+
+    Args:
+        dir_path (str): Path to the directory
+        train_ratio (float, optional): Ratio of training set size
+        test_ratio (float, optional): Ratio of test set size
+        valid_ratio (float, optional): Ratio of validation set size
+    """
     # Getting images and shuffling
     image_files = [
         f for f in os.listdir(dir_path) if f.endswith((".jpg", ".jpeg", ".png"))
@@ -103,5 +143,14 @@ def shuffle_sets(
     test_ratio: float = 0.2,
     valid_ratio: float = 0.1,
 ) -> None:
+    """
+    Shuffles image and label files into train, test and validation directories.
+
+    Args:
+        dir_path (str): Path to the directory
+        train_ratio (float, optional): Ratio of training set size
+        test_ratio (float, optional): Ratio of test set size
+        valid_ratio (float, optional): Ratio of validation set size
+    """
     _flatten_dir(dir_path)
     _divide_sets(dir_path, train_ratio, test_ratio, valid_ratio)

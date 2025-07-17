@@ -1,6 +1,7 @@
+"""Helper file to generate augmented images"""
+
 import os
 import random
-from typing import List
 
 import albumentations as A
 import cv2
@@ -8,7 +9,13 @@ import cv2
 from src import constants as c
 
 
-def get_random_transform():
+def get_random_transform() -> tuple[A.Compose, int]:
+    """
+    Generates random transformation
+
+    Returns:
+        tuple[A.Compose, int] : Random transformation and its hash (used for filepaths)
+    """
     # Random shear values
     shear_x = (random.uniform(-30, -10), random.uniform(10, 30))
     shear_y = (random.uniform(-30, -10), random.uniform(10, 30))
@@ -45,6 +52,16 @@ def get_random_transform():
 
 
 def augment_images(directory: str, n_augmentations: int, replace: bool = True) -> None:
+    """
+    Augments images in a certain directory.
+
+    Args:
+        directory (str): Path to the directory containing the images
+        n_augmentations (int): Number of augmentations to perform
+        replace (bool): If False, the original directory will remain unchanged
+        and a new augmented directory will be created. Otherwise, the original
+        directory will be renamed and the augmented directory replaces it.
+    """
     assert os.path.isdir(directory), "Directory does not exist for augmentation!"
     # Get paths from original folder
     images_dir = os.path.join(directory, "images")
@@ -107,7 +124,15 @@ def augment_images(directory: str, n_augmentations: int, replace: bool = True) -
         os.rename(f"{directory}_augmented", directory)
 
 
-def _filepaths_to_list(directory: str) -> List[str]:
+def _filepaths_to_list(directory: str) -> list[str]:
+    """
+    Creates a list of complete file paths of a given directory
+
+    Args:
+        directory (str): Path to the directory
+
+    Returns: list[str]: list of complete file paths
+    """
     file_paths = []
     for entry in os.listdir(directory):
         full_path = os.path.join(directory, entry)
