@@ -1,3 +1,5 @@
+"""Main execution file for training"""
+
 import os
 import shutil
 from roboflow import Roboflow
@@ -5,6 +7,7 @@ from ultralytics import YOLO
 
 from src import constants as c
 from src.augment import augment_images
+
 
 if __name__ == "__main__":
     # Download dataset from Roboflow
