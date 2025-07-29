@@ -1,17 +1,39 @@
+"""Helper script to removes classes from label files"""
+
 import os
 
-def filter_label_file(input_path, output_path, class_to_remove):
+
+def filter_label_file(input_path: str, output_path: str, class_to_remove: str):
+    """
+    Filters one class from one label file
+
+    Args:
+        input_path (str): Path to the label file
+        output_path (str): Path to the output label file
+        class_to_remove (str): Class to remove from label file
+    """
     with open(input_path, "r") as f:
         lines = f.readlines()
 
-    # Filtere alle Zeilen, die NICHT die zu entfernende Klasse enthalten
-    filtered_lines = [line for line in lines if not line.strip().startswith(class_to_remove + " ")]
+    # Keep all lines, that don't belong to class_to_remove
+    filtered_lines = [
+        line for line in lines if not line.strip().startswith(class_to_remove + " ")
+    ]
 
-    # Schreibe die gefilterten Zeilen
     with open(output_path, "w") as f:
         f.writelines(filtered_lines)
 
+
 def process_all_labels(label_dir, output_dir, class_to_remove):
+    """
+    Filters one class from all label files within a directory
+
+    Args:
+        label_dir (str): Path to the directory with label files
+        output_dir (str): Path to the output directory
+        class_to_remove (str): Class to remove from label files
+    """
+    os.makedirs(output_dir, exist_ok=True)
     for filename in os.listdir(label_dir):
         if not filename.endswith(".txt"):
             continue
@@ -19,6 +41,6 @@ def process_all_labels(label_dir, output_dir, class_to_remove):
         output_path = os.path.join(output_dir, filename)
         filter_label_file(input_path, output_path, class_to_remove)
 
-    print(f"Fertig. Klasse '{class_to_remove}' wurde aus den Labels entfernt.")
-
-
+    print(
+        f"Class '{class_to_remove}' was removed from label files and stored in '{output_dir}'."
+    )
