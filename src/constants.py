@@ -10,6 +10,7 @@ import matplotlib.image as mpimg
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.dirname(SRC_DIR)
 DATASET_LOCATION = os.path.join(PROJECT_DIR, "dataset")
+DETECT_DIR = os.path.join(PROJECT_DIR, "runs", "detect")  # Like ultralytics
 
 # Labels for bounding boxes
 CLASS_DICT = {0: ("Bauteil", "b"), 1: ("Schaden", "r")}
@@ -154,3 +155,24 @@ def shuffle_sets(
     """
     _flatten_dir(dir_path)
     _divide_sets(dir_path, train_ratio, test_ratio, valid_ratio)
+
+
+def unique_dir(path_to_dir: str) -> str:
+    """Finds a unique directory name for the given path
+
+    Args:
+        path_to_dir (str): Desired path to the directory
+
+    Returns:
+        str: Path to the unique directory
+    """
+    if not os.path.isdir(path_to_dir):
+        return path_to_dir
+
+    counter = 2
+    new_path = f"{path_to_dir}{{}}"
+    while os.path.isdir(new_path.format(counter)):
+        counter += 1
+    new_path = new_path.format(counter)
+
+    return new_path

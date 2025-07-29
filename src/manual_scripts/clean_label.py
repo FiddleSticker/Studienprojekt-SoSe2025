@@ -2,6 +2,8 @@
 
 import os
 
+from src import constants as c
+
 
 def filter_label_file(input_path: str, output_path: str, class_to_remove: str):
     """
@@ -44,3 +46,12 @@ def process_all_labels(label_dir, output_dir, class_to_remove):
     print(
         f"Class '{class_to_remove}' was removed from label files and stored in '{output_dir}'."
     )
+
+
+# if __name__ == "__main__":
+#     # Remove labels in a directory for debug purposes
+#
+#     dataset_dir = c.DATASET_LOCATION
+#     test_set_labels_dir = os.path.join(dataset_dir, "test", "labels")
+#
+#     process_all_labels(test_set_labels_dir, test_set_labels_dir, "0")

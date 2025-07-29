@@ -1,5 +1,6 @@
 """Helper script to plot images together with bounding boxes"""
 
+import os
 import matplotlib.pyplot as plt
 
 from src import constants as c
@@ -53,19 +54,18 @@ def plot_image_with_bboxes(image_path: str, label_path: str) -> None:
     plt.show()
 
 
-# # VLT MÜSST IHR HIER EURE DIRECTORY PATHS ANPASSEN!
-# import os
+# if __name__ == "__main__":
+#     # display images in a directory for debug purposes
+#     dataset_dir = c.DATASET_LOCATION
+#     test_set_dir = os.path.join(dataset_dir, "test")
+#     test_set_images_dir = os.path.join(test_set_dir, "images")
+#     test_set_labels_dir = os.path.join(test_set_dir, "labels")
 #
-# # dataset_dir = os.path.join(c.PROJECT_DIR, "Test2-8")
-# dataset_dir = os.path.join(c.PROJECT_DIR, "data")
-# test_set_dir = os.path.join(dataset_dir, "train")
-# test_set_images_dir = os.path.join(test_set_dir, "images")
-# test_set_labels_dir = os.path.join(test_set_dir, "labels")
+#     for file in os.listdir(test_set_images_dir):
+#         file_name = os.path.splitext(file)[0]
 #
-# for file in os.listdir(test_set_images_dir):
-#     file_name = os.path.splitext(file)[0]
+#         image_path = os.path.join(test_set_images_dir, file)
+#         label_path = os.path.join(test_set_labels_dir, f"{file_name}.txt")
 #
-#     image_path = os.path.join(test_set_images_dir, file)
-#     label_path = os.path.join(test_set_labels_dir, f"{file_name}.txt")
-#
-#     plot_image_with_bboxes(image_path, label_path)
+#         plot_image_with_bboxes(image_path, label_path)
+#         # break
